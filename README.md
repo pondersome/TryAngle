@@ -6,4 +6,4 @@ A simple tool for people to get a better feel for comparing angles in different 
 
 Just open [this html file in your browser](https://raw.githack.com/pondersome/TryAngle/main/TryAngle.html).
 
-This was made with [heavy use of chatgpt](https://chatgpt.com/share/0b204dc2-fb23-4808-b34c-63e4fdb01c99) 4o as coding assistant
+This was made with [heavy use of chatgpt](https://chatgpt.com/share/0b204dc2-fb23-4808-b34c-63e4fdb01c99) 4o as occasionally competent and persistently frustratingly clueless coding assistant. At least the conversation works as deep documentation of intent.
