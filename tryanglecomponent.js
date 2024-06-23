@@ -14,6 +14,7 @@ class TryAngle extends HTMLElement {
                     font-size: 20px;
                     text-anchor: middle;
                     cursor: pointer;
+                    touch-action: none;
                 }
                 .tic-mark {
                     stroke: black;
@@ -22,6 +23,8 @@ class TryAngle extends HTMLElement {
                     fill: red;
                     stroke: red;
                     cursor: pointer;
+                    touch-action: none;
+                    padding: 50px;
                 }
                 .center-cross {
                     stroke: black;
@@ -52,17 +55,18 @@ class TryAngle extends HTMLElement {
                     display: flex;
                     flex-direction: row;
                     flex-wrap: wrap;
+                    touch-action: pinch-zoom;
                 }
                 #controls {
-                    flex: 1 1 200px;
+                    flex: 0 1 290px;
                     padding: 10px;
                 }
                 #data-panel {
-                    flex: 1 1 auto;
+                    flex: 0 1 250px;
                     padding: 10px;
                 }
                 #protractors {
-                    flex: 3 1 600px;
+                    flex: 1 1 600px;
                 }
             </style>
             <div id="main-container">
@@ -320,38 +324,39 @@ class TryAngle extends HTMLElement {
         const y = this.BASE_RADIUS * Math.sin(angle_canvas_radians);
         cursor.setAttribute('transform', `translate(${x}, ${y}) scale(${scale})`);
     }
-
     addDragListeners(protractorGroup, cursor, id) {
         let isDraggingProtractor = false;
         let isDraggingCursor = false;
         let startAngleProtractor = 0;
         let startAngleCursor = 0;
-
+    
         const onPointerDown = (event) => {
             event.preventDefault();
             const target = event.target;
-
+    
             if (target.closest('.cursor')) {
                 isDraggingCursor = true;
                 startAngleCursor = this.getPointerAngle(event, protractorGroup);
+                cursor.setPointerCapture(event.pointerId);  // Capture pointer events for the cursor
             } else {
                 isDraggingProtractor = true;
                 startAngleProtractor = this.getPointerAngle(event, protractorGroup);
+                protractorGroup.setPointerCapture(event.pointerId);  // Capture pointer events for the protractor group
             }
-
+    
             document.addEventListener('pointermove', onPointerMove);
             document.addEventListener('pointerup', onPointerUp);
         };
-
+    
         const onPointerMove = (event) => {
             const protractor = this.protractors.find(p => p.id === id);
             if (!protractor) return;
-
+    
             if (isDraggingProtractor) {
                 const angle = this.getPointerAngle(event, protractorGroup);
                 const delta = (angle - startAngleProtractor) * this.regimes[protractor.regime.name].direction;
                 startAngleProtractor = angle;
-
+    
                 protractor.rotation += delta / protractor.regime.ratio;
                 this.updateProtractorRotation(id, protractor.rotation);
                 this.updateControls(id, 'rotation', protractor.rotation);
@@ -360,7 +365,7 @@ class TryAngle extends HTMLElement {
                 const angle = this.getPointerAngle(event, protractorGroup);
                 const delta = (angle - startAngleCursor) * this.regimes[protractor.regime.name].direction;
                 startAngleCursor = angle;
-
+    
                 protractor.cursorPosition += delta / protractor.regime.ratio;
                 if (protractor.cursorPosition < 0) {
                     protractor.cursorPosition += 360 / protractor.regime.ratio;
@@ -372,17 +377,25 @@ class TryAngle extends HTMLElement {
                 this.updateDataPanel();
             }
         };
-
-        const onPointerUp = () => {
+    
+        const onPointerUp = (event) => {
+            if (isDraggingCursor) {
+                cursor.releasePointerCapture(event.pointerId);  // Release pointer capture for the cursor
+            }
+            if (isDraggingProtractor) {
+                protractorGroup.releasePointerCapture(event.pointerId);  // Release pointer capture for the protractor group
+            }
+    
             isDraggingProtractor = false;
             isDraggingCursor = false;
             document.removeEventListener('pointermove', onPointerMove);
             document.removeEventListener('pointerup', onPointerUp);
         };
-
+    
         protractorGroup.addEventListener('pointerdown', onPointerDown);
         cursor.addEventListener('pointerdown', onPointerDown);
     }
+    
 
     getPointerAngle(event, element) {
         const rect = this.protractorsContainer.getBoundingClientRect();
