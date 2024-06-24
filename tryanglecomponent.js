@@ -655,17 +655,19 @@ class TryAngle extends HTMLElement {
         const cursorToCursorInP2UnitsOpposite = p2.regime.labelFunction(cursorToCursorCanvasP2toP1 / p2.regime.ratio);
 
         // Display Page normalized relative angles
-        dataPanel.innerHTML = `
-            <p>Page Normalized Relative Angles:</p>
-            <ul>
-                <li>P1=>P2: ${p1RelativeToP2InP1Units}, ${p1RelativeToP2InP2Units}</li>
-                <li>P2=>P1: ${p2RelativeToP1InP2Units}, ${p2RelativeToP1InP1Units}</li>
-                <li>C1=>P2: ${p1CursorRelativeToP2InP1Units}, ${p1CursorRelativeToP2InP2Units}</li>
-                <li>C2=>P1: ${p2CursorRelativeToP1InP2Units}, ${p2CursorRelativeToP1InP1Units}</li>
-                <li>C1=>C2: ${cursorToCursorInP1Units}, ${cursorToCursorInP2Units}</li>
-                <li>C2=>C1: ${cursorToCursorInP2UnitsOpposite}, ${cursorToCursorInP1UnitsOpposite}</li>
-            </ul>
-        `;
+        if (this.pageNormalizedDataVisible){
+            dataPanel.innerHTML = `
+                <p>Page Normalized Relative Angles:</p>
+                <ul>
+                    <li>P1=>P2: ${p1RelativeToP2InP1Units}, ${p1RelativeToP2InP2Units}</li>
+                    <li>P2=>P1: ${p2RelativeToP1InP2Units}, ${p2RelativeToP1InP1Units}</li>
+                    <li>C1=>P2: ${p1CursorRelativeToP2InP1Units}, ${p1CursorRelativeToP2InP2Units}</li>
+                    <li>C2=>P1: ${p2CursorRelativeToP1InP2Units}, ${p2CursorRelativeToP1InP1Units}</li>
+                    <li>C1=>C2: ${cursorToCursorInP1Units}, ${cursorToCursorInP2Units}</li>
+                    <li>C2=>C1: ${cursorToCursorInP2UnitsOpposite}, ${cursorToCursorInP1UnitsOpposite}</li>
+                </ul>
+            `;
+        }
 
         // Calculate Direct relative angles (Direct relative angles)
         const p1RotationDirect = p1.rotation * p1.regime.ratio;
